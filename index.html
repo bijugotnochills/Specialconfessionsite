@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Valentine 💖 | A Digital Confession</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="floating-hearts"></div>
+    <div class="floating-emotes"></div>
+    <div class="petals-container"></div>
+    <div class="sparkles"></div>
+
+    <!-- Entry Screen -->
+    <section id="entry-screen" class="screen active">
+        <div class="container">
+            <div class="heart-icon">💖</div>
+            <h1 class="title">Before we begin...</h1>
+            <p class="subtitle">tell me your beautiful name <span class="flower">🌸</span></p>
+            
+            <div class="input-group">
+                <input type="text" id="userName" placeholder="Your name here..." maxlength="20" autocomplete="off">
+                <div class="input-underline"></div>
+            </div>
+            
+            <button id="enter-btn" class="btn-primary" disabled>
+                <span class="btn-text">Begin Our Story</span>
+                <span class="btn-heart">💕</span>
+            </button>
+            
+            <div class="hint">Press Enter or click the button when ready</div>
+        </div>
+    </section>
+
+    <!-- Loading Screen -->
+    <section id="loading-screen" class="screen">
+        <div class="container">
+            <div class="loading-header">
+                <div class="loading-heart">
+                    <div class="heart-pulse"></div>
+                    <div class="heart-core">💝</div>
+                </div>
+                <h2>Preparing something magical...</h2>
+                <p class="loading-sub">MLBB Rizz Experience Loading</p>
+            </div>
+            
+            <div class="quote-display">
+                <div class="quote-card active">
+                    <p class="quote-text"></p>
+                    <div class="quote-author"></div>
+                </div>
+            </div>
+            
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            
+            <div class="loading-countdown">
+                <span class="countdown-number">50</span> seconds until the magic begins
+            </div>
+        </div>
+    </section>
+
+    <!-- Questions Section -->
+    <section id="questions-screen" class="screen">
+        <div class="container">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="progress-text">Question <span id="current-q">1</span> of 10</div>
+            </div>
+            
+            <div class="question-card">
+                <div class="question-header">
+                    <div class="question-emoji">🌸</div>
+                    <h2 class="question-title" id="question-text"></h2>
+                </div>
+                
+                <div class="answers-container">
+                    <!-- Options will be injected here by JS -->
+                </div>
+                
+                <div class="input-answer-container">
+                    <input type="text" id="text-answer" placeholder="Type your answer here...">
+                    <button id="next-btn" class="btn-primary" disabled>
+                        <span class="btn-text">Continue</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="answer-counter">
+                <span id="answer-count">0</span> memories collected
+            </div>
+        </div>
+    </section>
+
+    <!-- Heartfelt Message Screen -->
+    <section id="message-screen" class="screen">
+        <div class="container">
+            <div class="message-envelope">
+                <div class="envelope-flap"></div>
+                <div class="envelope-body">
+                    <div class="letter">
+                        <div class="letter-content">
+                            <div class="letter-header">
+                                <span class="letter-heart">💌</span>
+                                <h2>A Message For <span id="message-name"></span></h2>
+                            </div>
+                            <div class="letter-body">
+                                <p id="dynamic-message"></p>
+                            </div>
+                            <div class="letter-footer">
+                                <p class="signature">With all my heart,</p>
+                                <p class="signature-name">Your Secret Admirer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Countdown Section -->
+            <div class="countdown-timer">
+                <div class="countdown-card">
+                    <div class="countdown-icon">⏳</div>
+                    <div class="countdown-text">
+                        <p>Something magical will appear in</p>
+                        <div class="countdown-display">
+                            <span id="countdown-number">20</span>
+                            <span class="countdown-label">seconds</span>
+                        </div>
+                        <p class="countdown-hint">Hold on just a little longer... 💖</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="proceed-btn" class="btn-primary">
+                <span class="btn-text">I Can't Wait! Show Me Now!</span>
+                <span class="btn-heart">✨</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Final Confession Screen -->
+    <section id="confession-screen" class="screen">
+        <div class="container">
+            <div class="confession-card">
+                <div class="confession-glow"></div>
+                <div class="confession-content">
+                    <div class="confession-header">
+                        <div class="confusion-hearts">
+                            <span class="heart-float">💖</span>
+                            <span class="heart-float">💗</span>
+                            <span class="heart-float">💓</span>
+                        </div>
+                        <h1 class="confession-title">
+                            <span id="final-name"></span>,
+                            <br>
+                            will you be my Valentine?
+                        </h1>
+                        <div class="confession-subtitle">💝 Choose your destiny 💝</div>
+                    </div>
+                    
+                    <div class="buttons-container">
+                        <button id="yes-btn" class="btn-yes">
+                            <span class="btn-text">YES! Absolutely Yes!</span>
+                            <span class="btn-icon">💖</span>
+                            <div class="btn-sparkles"></div>
+                        </button>
+                        
+                        <button id="no-btn" class="btn-no">
+                            <span class="btn-text">Maybe Not...</span>
+                            <span class="btn-icon">💔</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="escape-text">
+                <p>(There's actually no escape, you know)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Yes Response Screen -->
+    <section id="yes-screen" class="screen">
+        <div class="container">
+            <div class="celebration">
+                <div class="confetti-container"></div>
+                <div class="heart-explosion"></div>
+                
+                <div class="celebration-card">
+                    <h1 class="celebration-title">
+                        <span class="congrats-emoji">🎉</span> 
+                        CONGRATULATIONS 
+                        <span class="user-name-display" id="yes-screen-name"></span>
+                        <span class="congrats-emoji">🎉</span>
+                    </h1>
+                    <p class="celebration-subtitle">You have officially been kidnapped by my heart! 💘</p>
+                    
+                    <div class="celebration-message">
+                        <p class="message-line">You're now my permanent:</p>
+                        <div class="roles-container">
+                            <div class="role-tag">💖 Player 2 For Life</div>
+                            <div class="role-tag">🌸 Duo Partner</div>
+                            <div class="role-tag">✨ Heart's Buff</div>
+                            <div class="role-tag">🎮 Co-op Forever</div>
+                            <div class="role-tag">💕 My Valentine</div>
+                            <div class="role-tag">👑 My Queen/King</div>
+                        </div>
+                        
+                        <div class="final-message">
+                            <p>Every match needs the perfect duo, and my heart found its permanent teammate in you.</p>
+                            <p>From this Valentine's Day forward, you're stuck with me in every game, every adventure, every moment.</p>
+                            <p><strong class="highlight-message">Ready to accept this forever buff, <span class="user-name-inline" id="yes-screen-name-inline"></span>? 💕</strong></p>
+                        </div>
+                    </div>
+                    
+                    <div class="celebration-actions">
+                        <button id="restart-btn" class="btn-primary">
+                            <span class="btn-text">Relive the Magic Again</span>
+                            <span class="btn-heart">🔄</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- No Popup -->
+    <div id="no-popup" class="popup">
+        <div class="popup-content">
+            <div class="popup-header">
+                <span class="popup-emoji">😢</span>
+                <h3 class="popup-title">Wait! Don't go!</h3>
+            </div>
+            <div class="popup-body">
+                <p id="popup-message"></p>
+            </div>
+            <div class="popup-footer">
+                <button id="popup-close" class="btn-small">Okay, one more chance</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="bg-music" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-sunset-687.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="click-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
+    <audio id="heart-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-heartbeat-991.mp3"></audio>
+    <audio id="success-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
