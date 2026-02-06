@@ -1,4 +1,4 @@
-/* style.css - UPDATED VERSION */
+/* style.css - COMPLETE UPDATED VERSION */
 :root {
     /* Romantic Pastel Color Palette */
     --primary-pink: #ffafcc;
@@ -103,7 +103,7 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* Entry Screen Styles */
+/* ====== ENTRY SCREEN ====== */
 #entry-screen .container {
     text-align: center;
     animation: floatIn 1s var(--transition-slow);
@@ -249,6 +249,30 @@ body {
     left: -100%;
 }
 
+.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+    animation: fadeInButton 0.5s ease forwards;
+}
+
+@keyframes fadeInButton {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .hint {
     margin-top: 20px;
     color: var(--lavender);
@@ -256,7 +280,7 @@ body {
     opacity: 0.7;
 }
 
-/* Loading Screen */
+/* ====== LOADING SCREEN ====== */
 #loading-screen .container {
     text-align: center;
 }
@@ -375,7 +399,7 @@ body {
     to { transform: translateY(-5px); }
 }
 
-/* Questions Screen */
+/* ====== QUESTIONS SCREEN ====== */
 .progress-container {
     margin-bottom: 30px;
 }
@@ -518,23 +542,67 @@ body {
     animation: pulse 2s infinite;
 }
 
-/* Message Screen */
+/* ====== MESSAGE SCREEN - UPDATED FOR PC ====== */
+#message-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.8s var(--transition-medium), visibility 0.8s;
+    z-index: 1;
+    overflow-y: auto;
+}
+
+#message-screen.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+}
+
+#message-screen .container {
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    box-shadow: var(--shadow-hard);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    margin: auto;
+    min-height: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+}
+
 .message-envelope {
     position: relative;
-    max-width: 600px;
+    width: 100%;
     margin: 0 auto 30px;
+    flex: 1;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
 }
 
 .envelope-flap {
     position: absolute;
-    top: -20px;
+    top: -60px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: clamp(150px, 25vw, 200px) solid transparent;
-    border-right: clamp(150px, 25vw, 200px) solid transparent;
-    border-bottom: clamp(70px, 10vw, 100px) solid var(--light-pink);
+    border-left: clamp(150px, 20vw, 250px) solid transparent;
+    border-right: clamp(150px, 20vw, 250px) solid transparent;
+    border-bottom: clamp(70px, 10vw, 120px) solid var(--light-pink);
     z-index: 2;
     animation: flap 3s ease-in-out infinite;
 }
@@ -546,52 +614,94 @@ body {
 
 .envelope-body {
     background: linear-gradient(135deg, var(--deep-pink), var(--lavender));
-    padding: 20px;
+    padding: 25px;
     border-radius: 20px;
     position: relative;
-    overflow: hidden;
     box-shadow: var(--shadow-hard);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
 }
 
 .letter {
     background: white;
     border-radius: 15px;
-    padding: clamp(20px, 4vw, 40px);
-    transform: translateY(20px);
+    padding: clamp(25px, 5vw, 50px);
     animation: letterAppear 1s var(--transition-slow) forwards;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
 }
 
 @keyframes letterAppear {
-    to { transform: translateY(0); }
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.letter-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
 }
 
 .letter-header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     border-bottom: 2px solid var(--light-pink);
-    padding-bottom: 15px;
+    padding-bottom: 20px;
+    flex-shrink: 0;
 }
 
 .letter-heart {
-    font-size: clamp(2.5rem, 5vw, 3rem);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
     display: block;
     margin-bottom: 15px;
     animation: heartbeat 1.5s infinite;
 }
 
 .letter-body {
-    font-size: clamp(1rem, 2.5vw, 1.2rem);
-    line-height: 1.6;
+    font-size: clamp(1rem, 1.8vw, 1.1rem);
+    line-height: 1.7;
     color: #5a5560;
     margin-bottom: 20px;
-    min-height: 150px;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    min-height: 200px;
+    max-height: 60vh;
+}
+
+/* Custom scrollbar for letter body */
+.letter-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.letter-body::-webkit-scrollbar-track {
+    background: var(--soft-pink);
+    border-radius: 10px;
+}
+
+.letter-body::-webkit-scrollbar-thumb {
+    background: var(--lavender);
+    border-radius: 10px;
 }
 
 .letter-footer {
     text-align: right;
     border-top: 2px solid var(--light-pink);
-    padding-top: 15px;
+    padding-top: 20px;
+    margin-top: 20px;
+    flex-shrink: 0;
 }
 
 .signature {
@@ -607,70 +717,85 @@ body {
     margin-top: 5px;
 }
 
-/* Countdown Timer Styles */
-.countdown-timer {
-    margin: 30px auto;
-    max-width: 400px;
-    width: 100%;
+#proceed-btn {
+    margin-top: 20px;
+    flex-shrink: 0;
+    align-self: center;
+    transition: all 0.5s ease;
 }
 
-.countdown-card {
-    background: linear-gradient(135deg, var(--light-pink), var(--baby-blue));
-    border-radius: 20px;
-    padding: 25px;
-    text-align: center;
-    box-shadow: var(--shadow-medium);
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    animation: pulse 2s infinite;
-}
-
-.countdown-icon {
-    font-size: clamp(2.5rem, 5vw, 3rem);
-    margin-bottom: 15px;
-    animation: spin 4s linear infinite;
-}
-
-.countdown-text {
+/* Dynamic message styling */
+.highlight {
     color: var(--deep-pink);
-    font-size: clamp(0.9rem, 2vw, 1.1rem);
-    margin-bottom: 10px;
-    line-height: 1.4;
+    font-weight: 600;
+    font-family: var(--font-title);
 }
 
-.countdown-display {
-    font-size: clamp(2.5rem, 5vw, 3rem);
-    font-weight: bold;
+.message-opening {
+    font-size: 1.3em;
     font-family: var(--font-title);
     color: var(--deep-pink);
-    margin: 15px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
+    display: block;
+    margin-bottom: 10px;
 }
 
-#countdown-number {
-    display: inline-block;
-    min-width: 60px;
-    animation: heartbeat 1.5s ease-in-out infinite;
-}
-
-.countdown-label {
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    color: var(--lavender);
-    font-family: var(--font-body);
-}
-
-.countdown-hint {
-    font-size: clamp(0.8rem, 1.8vw, 0.9rem);
-    color: var(--lavender);
+.message-intro {
     font-style: italic;
-    margin-top: 10px;
-    opacity: 0.8;
+    color: var(--lavender);
 }
 
-/* Confession Screen */
+.message-conclusion {
+    font-weight: 500;
+    color: var(--deep-pink);
+    border-left: 3px solid var(--lavender);
+    padding-left: 15px;
+    margin: 15px 0;
+}
+
+.magic-line {
+    background: linear-gradient(135deg, var(--light-pink), var(--baby-blue));
+    padding: 10px 15px;
+    border-radius: 10px;
+    display: inline-block;
+    margin: 10px 0;
+    box-shadow: var(--shadow-soft);
+}
+
+.final-line {
+    font-family: var(--font-title);
+    font-size: 1.2em;
+    color: var(--deep-pink);
+    text-align: center;
+    display: block;
+    margin-top: 20px;
+    padding: 15px;
+    border: 2px dashed var(--lavender);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+/* For very long messages on PC */
+@media (min-width: 769px) {
+    .letter-body {
+        max-height: 50vh;
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+    
+    #message-screen .container {
+        max-width: 1000px;
+        padding: 50px;
+    }
+}
+
+/* For very tall screens */
+@media (min-height: 900px) {
+    .letter-body {
+        max-height: 70vh;
+    }
+}
+
+/* ====== CONFESSION SCREEN ====== */
 .confession-card {
     position: relative;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 248, 248, 0.95));
@@ -830,7 +955,7 @@ body {
     font-size: clamp(0.9rem, 2vw, 1rem);
 }
 
-/* Yes Screen */
+/* ====== YES SCREEN ====== */
 #yes-screen .container {
     max-width: 900px;
 }
@@ -944,7 +1069,7 @@ body {
     margin-top: 30px;
 }
 
-/* Popup */
+/* ====== POPUP ====== */
 .popup {
     position: fixed;
     top: 0;
@@ -1038,7 +1163,7 @@ body {
     transform: translateY(-3px);
 }
 
-/* Background Elements */
+/* ====== BACKGROUND ELEMENTS ====== */
 .floating-hearts, .floating-emotes, .petals-container, .sparkles {
     position: fixed;
     top: 0;
@@ -1049,7 +1174,7 @@ body {
     z-index: 0;
 }
 
-/* Animation Classes */
+/* ====== ANIMATION CLASSES ====== */
 .fade-in {
     animation: fadeIn 0.8s var(--transition-medium) forwards;
 }
@@ -1087,7 +1212,7 @@ body {
     50% { box-shadow: 0 0 40px var(--deep-pink); }
 }
 
-/* Enhanced Mobile Responsiveness */
+/* ====== ENHANCED MOBILE RESPONSIVENESS ====== */
 @media (max-width: 768px) {
     .container {
         padding: 20px;
@@ -1120,11 +1245,6 @@ body {
         margin-top: 10px;
     }
     
-    .countdown-display {
-        flex-direction: column;
-        gap: 5px;
-    }
-    
     .buttons-container {
         flex-direction: column;
         align-items: center;
@@ -1133,6 +1253,19 @@ body {
     .btn-yes, .btn-no {
         width: 100%;
         max-width: 280px;
+    }
+    
+    #message-screen {
+        padding: 20px;
+    }
+    
+    #message-screen .container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .letter-body {
+        max-height: 50vh;
     }
 }
 
@@ -1291,6 +1424,19 @@ body {
         width: 100%;
         max-width: 100%;
     }
+    
+    #message-screen .container {
+        padding: 15px;
+    }
+    
+    .letter {
+        padding: 20px;
+    }
+    
+    .letter-body {
+        font-size: 1rem;
+        max-height: 40vh;
+    }
 }
 
 /* Extra small devices */
@@ -1338,6 +1484,10 @@ body {
         padding: 8px 12px;
         font-size: 0.85rem;
     }
+    
+    .letter-body {
+        max-height: 35vh;
+    }
 }
 
 /* Fix for very tall screens */
@@ -1357,6 +1507,10 @@ body {
     .answers-container {
         max-height: 40vh;
         overflow-y: auto;
+    }
+    
+    .letter-body {
+        max-height: 40vh;
     }
 }
 
@@ -1415,6 +1569,10 @@ body {
     #next-btn {
         padding: 10px 15px;
         font-size: 0.9rem;
+    }
+    
+    .letter-body {
+        max-height: 30vh;
     }
 }
 

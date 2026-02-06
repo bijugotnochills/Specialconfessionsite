@@ -1,4 +1,4 @@
-// main.js - COMPLETE UPDATED VERSION WITH ENHANCED DYNAMIC MESSAGES
+// main.js - COMPLETE UPDATED VERSION WITH SERIAL QUOTES
 document.addEventListener('DOMContentLoaded', function() {
     // App State
     const state = {
@@ -6,46 +6,46 @@ document.addEventListener('DOMContentLoaded', function() {
         answers: {},
         currentQuestion: 0,
         noClickCount: 0,
-        quoteDuration: 2.5,
-        totalQuotes: 20,
-        loadingTime: 0,
+        quoteDuration: 2.5, // Each quote shows for 2.5 seconds
+        totalQuotes: 40, // We have 40 quotes
+        loadingTime: 0, // Will be calculated based on quotes
         quotes: [
             "Even Kagura's umbrella can't hide how much I want to tell you something...",
-            "Angela thinks you're the healing my heart needs.",
-            "Vale whispered your name into the wind... and now it won't leave my mind.",
+            "Angela thinks you're the buff my heart needs.",
+            "Vale whispered your name into the wind... and now it won't leave my chest.",
             "If love was a skill, you'd be my ultimate.",
             "My heart's cooldown resets every time I think of you.",
-            // "You're the perfect combo my soul has been waiting for.",
+            "You're the perfect combo my soul has been waiting for.",
             "Like Floryn's healing, your smile fixes everything.",
             "Zhetian's stars aren't as bright as your eyes.",
-            "Even Luo Yi's portals couldn't take me away from you.",
+            "Luo Yi's portals couldn't take me away from you.",
             "Hanabi's petals aren't as delicate as my feelings for you.",
-            // "My heart's KDA: Killed by your beauty, Death by your smile, Assisted by your kindness",
-            // "You're the missing piece to complete my soul's equipment.",
-            "If you were a hero, you'd be My Fav one I'd play everyday.",
-            // "My love for you has 100% magic lifesteal.",
-            "You're the permanent buff my soul never knew it needed in this game called MLBB.",
-            // "Even Vale's tornados can't shake my feelings for you.",
-            // "Like Angela's ult, I want to protect you forever.",
-            // "My heart's passive: Infinite affection for you",
-            // "You're the critical hit my life was missing.",
-            // "If love was a map, you'd be my eternal base.",
-            // "Guinevere's magic isn't as enchanting as you are.",
-            "Floryn's bloom isn't as beautiful as you are mweheheheheheh.",
-            // "Zhetian's cosmic power is nothing compared to your gravity.",
-            // "Luo Yi's yin yang can't balance how much I lean toward you.",
-            // "Hanabi's ninja ways couldn't stealth steal my heart like you did.",
-            // "You're my permanent teammate in this game called life.",
-            // "My affection meter charges 100% faster when you're around.",
-            // "You're the ultimate skill I want to master forever.",
+            "My heart's KDA: Killed by your beauty, Death by your smile, Assisted by your kindness",
+            "You're the missing piece to complete my soul's equipment.",
+            "If you were a hero, you'd be SSS+ tier in my heart.",
+            "My love for you has 100% magic lifesteal.",
+            "You're the permanent buff my soul never knew it needed.",
+            "Even Vale's tornados can't shake my feelings for you.",
+            "Like Angela's ult, I want to protect you forever.",
+            "My heart's passive: Infinite affection for you",
+            "You're the critical hit my life was missing.",
+            "If love was a map, you'd be my eternal base.",
+            "Guinevere's magic isn't as enchanting as you are.",
+            "Floryn's bloom isn't as beautiful as your spirit.",
+            "Zhetian's cosmic power is nothing compared to your gravity.",
+            "Luo Yi's yin yang can't balance how much I lean toward you.",
+            "Hanabi's ninja ways couldn't stealth steal my heart like you did.",
+            "You're my permanent teammate in this game called life.",
+            "My affection meter charges 100% faster when you're around.",
+            "You're the ultimate skill I want to master forever.",
             "Even the Lord couldn't command me to stop thinking about you.",
-            // "Your laughter is my favorite soundtrack.",
+            "Your laughter is my favorite soundtrack.",
             "If you were an emote, you'd be my favorite spam.",
             "My heart's recall animation always brings me back to you.",
             "You're the legendary skin my soul always wanted.",
-            // "Like a perfect gank, you appeared and captured everything.",
-            // "My devotion has unlimited mana when it comes to you.",
-            // "You're the victory screen my dreams keep showing.",
+            "Like a perfect gank, you appeared and captured everything.",
+            "My devotion has unlimited mana when it comes to you.",
+            "You're the victory screen my dreams keep showing.",
             "Even the mightiest lord falls for your charm.",
             "Your kindness is my permanent blue buff.",
             "My love for you has global range.",
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ]
     };
 
-    // Calculate loading time based on quotes
+    // Calculate loading time based on quotes: 40 quotes × 2.5s = 100 seconds
     state.loadingTime = state.totalQuotes * state.quoteDuration;
 
     // DOM Elements
@@ -197,7 +197,6 @@ document.addEventListener('DOMContentLoaded', function() {
         popupClose: document.getElementById('popup-close'),
         proceedBtn: document.getElementById('proceed-btn'),
         restartBtn: document.getElementById('restart-btn'),
-        countdownNumberEl: document.getElementById('countdown-number'),
         popupEmoji: document.querySelector('.popup-emoji'),
         popupTitle: document.querySelector('.popup-title'),
         yesScreenName: document.getElementById('yes-screen-name'),
@@ -212,9 +211,10 @@ document.addEventListener('DOMContentLoaded', function() {
         successSound: document.getElementById('success-sound')
     };
 
-    // Countdown Timer for Message Screen
-    let messageCountdownTimer = null;
-    let messageCountdownSeconds = 20;
+    // Variables for timeout management
+    let proceedButtonTimeout = null;
+    let quoteInterval = null;
+    let countdownInterval = null;
 
     // Initialize
     function init() {
@@ -222,16 +222,31 @@ document.addEventListener('DOMContentLoaded', function() {
         createPetals();
         createSparkles();
         setupEventListeners();
-        audio.bgMusic.volume = 0.3;
+        
+        // Set audio volumes
+        audio.bgMusic.volume = 1.0; // Full volume for background music
         audio.clickSound.volume = 0.5;
         audio.heartSound.volume = 0.4;
         audio.successSound.volume = 0.6;
         
-        // Auto-play music on first interaction
-        document.addEventListener('click', function initAudio() {
-            audio.bgMusic.play().catch(e => console.log("Audio play failed:", e));
-            document.removeEventListener('click', initAudio);
-        }, { once: true });
+        // Start background music automatically (muted and then unmuted)
+        startBackgroundMusic();
+    }
+
+    // Start background music with user interaction fallback
+    function startBackgroundMusic() {
+        // Try to play immediately (browsers may block this)
+        audio.bgMusic.play().catch(e => {
+            console.log("Auto-play blocked, waiting for user interaction");
+            // Set up interaction listener
+            document.addEventListener('click', function initAudio() {
+                audio.bgMusic.play().catch(e => console.log("Audio play failed:", e));
+                document.removeEventListener('click', initAudio);
+            }, { once: true });
+        });
+        
+        // Ensure music loops
+        audio.bgMusic.loop = true;
     }
 
     // Create floating hearts background
@@ -309,6 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Setup event listeners
     function setupEventListeners() {
+        // Entry screen
         elements.userNameInput.addEventListener('input', handleNameInput);
         elements.userNameInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && elements.enterBtn.disabled === false) {
@@ -317,23 +333,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         elements.enterBtn.addEventListener('click', handleEnterClick);
         
+        // Questions screen
         elements.nextBtn.addEventListener('click', handleNextQuestion);
         elements.textAnswer.addEventListener('input', handleTextAnswer);
         
-        elements.proceedBtn.addEventListener('click', () => {
-            playSound('click');
-            if (messageCountdownTimer) {
-                clearInterval(messageCountdownTimer);
-            }
-            switchScreen(screens.confession);
-        });
+        // Message screen - proceed button
+        elements.proceedBtn.addEventListener('click', handleProceedClick);
         
+        // Confession screen
         elements.yesBtn.addEventListener('click', handleYesClick);
         elements.noBtn.addEventListener('click', handleNoClick);
         elements.popupClose.addEventListener('click', closePopup);
         
+        // Yes screen
         elements.restartBtn.addEventListener('click', restartExperience);
         
+        // Close popup when clicking outside
         elements.noPopup.addEventListener('click', (e) => {
             if (e.target === elements.noPopup) {
                 closePopup();
@@ -368,22 +383,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Start loading screen
     function startLoadingScreen() {
+        // Set initial countdown to 100 seconds
         let timeLeft = state.loadingTime;
         elements.countdownNumber.textContent = timeLeft;
-        let progress = 0;
         
+        // Start showing quotes serially at 2.5 second intervals
         let quoteIndex = 0;
-        showRandomQuote();
+        showQuote(quoteIndex); // Show first quote immediately
         
-        const quoteInterval = setInterval(() => {
-            showRandomQuote();
+        // Update progress based on quotes shown
+        let progress = ((quoteIndex + 1) / state.totalQuotes) * 100;
+        elements.loadingProgress.style.width = `${progress}%`;
+        
+        // Set up interval for showing quotes serially
+        quoteInterval = setInterval(() => {
             quoteIndex++;
-            
-            progress = ((quoteIndex + 1) / state.totalQuotes) * 100;
-            elements.loadingProgress.style.width = `${progress}%`;
+            if (quoteIndex < state.quotes.length) {
+                showQuote(quoteIndex);
+                
+                // Update progress based on quotes shown
+                progress = ((quoteIndex + 1) / state.totalQuotes) * 100;
+                elements.loadingProgress.style.width = `${progress}%`;
+            } else {
+                // We've shown all quotes, clear the interval
+                clearInterval(quoteInterval);
+            }
         }, state.quoteDuration * 1000);
         
-        const countdownInterval = setInterval(() => {
+        // Update countdown every second
+        countdownInterval = setInterval(() => {
             timeLeft--;
             elements.countdownNumber.textContent = timeLeft;
             
@@ -397,14 +425,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1000);
     }
 
-    // Show random quote
-    function showRandomQuote() {
-        const quote = state.quotes[Math.floor(Math.random() * state.quotes.length)];
-        
-        elements.quoteText.textContent = `"${quote}"`;
-        elements.quoteText.parentElement.classList.remove('active');
-        void elements.quoteText.parentElement.offsetWidth;
-        elements.quoteText.parentElement.classList.add('active');
+    // Show quote at specific index (serially)
+    function showQuote(index) {
+        if (index >= 0 && index < state.quotes.length) {
+            const quote = state.quotes[index];
+            elements.quoteText.textContent = `"${quote}"`;
+            
+            // Trigger animation
+            elements.quoteText.parentElement.classList.remove('active');
+            void elements.quoteText.parentElement.offsetWidth; // Trigger reflow
+            elements.quoteText.parentElement.classList.add('active');
+        }
     }
 
     // Load question
@@ -415,6 +446,7 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.questionText.textContent = question.text;
         elements.progressFill.style.width = `${((index + 1) / state.questions.length) * 100}%`;
         
+        // Clear previous answers
         elements.answersContainer.innerHTML = '';
         elements.nextBtn.disabled = true;
         elements.textAnswer.style.display = 'none';
@@ -439,15 +471,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function selectOption(value, element) {
         playSound('click');
         
+        // Remove selected class from all options
         document.querySelectorAll('.answer-option').forEach(opt => {
             opt.classList.remove('selected');
         });
         
+        // Add selected class to clicked option
         element.classList.add('selected');
         
+        // Store answer
         state.answers[state.questions[state.currentQuestion].id] = value;
         elements.nextBtn.disabled = false;
         
+        // Update answer count
         elements.answerCount.textContent = Object.keys(state.answers).length;
     }
 
@@ -472,33 +508,48 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             generateDynamicMessage();
             switchScreen(screens.message);
-            startMessageCountdown();
+            
+            // Clear any existing timeout
+            if (proceedButtonTimeout) {
+                clearTimeout(proceedButtonTimeout);
+            }
+            
+            // Hide proceed button initially
+            elements.proceedBtn.classList.add('hidden');
+            
+            // Show proceed button after 10 seconds
+            proceedButtonTimeout = setTimeout(() => {
+                elements.proceedBtn.classList.remove('hidden');
+                elements.proceedBtn.classList.add('visible');
+                playSound('heart'); // Gentle sound when button appears
+            }, 10000);
         }
     }
 
-    // Start 20-second countdown after message screen
-    function startMessageCountdown() {
-        messageCountdownSeconds = 20;
-        elements.countdownNumberEl.textContent = messageCountdownSeconds;
+    // Handle proceed button click
+    function handleProceedClick() {
+        playSound('click');
         
-        messageCountdownTimer = setInterval(() => {
-            messageCountdownSeconds--;
-            elements.countdownNumberEl.textContent = messageCountdownSeconds;
-            
-            if (messageCountdownSeconds <= 0) {
-                clearInterval(messageCountdownTimer);
-                playSound('success');
-                switchScreen(screens.confession);
-            }
-        }, 1000);
+        // Clear the timeout if button is clicked before it appears
+        if (proceedButtonTimeout) {
+            clearTimeout(proceedButtonTimeout);
+        }
+        
+        // Switch to confession screen
+        switchScreen(screens.confession);
     }
 
-    // ENHANCED: Generate dynamic message based on specific answers
+    // Generate dynamic message
     function generateDynamicMessage() {
         elements.messageName.textContent = state.userName;
         elements.finalName.textContent = state.userName;
         elements.yesScreenName.textContent = state.userName;
         elements.yesScreenNameInline.textContent = state.userName;
+        
+        // Reset and ensure proper styling for dynamic message
+        elements.dynamicMessage.style.maxHeight = 'none';
+        elements.dynamicMessage.style.overflow = 'visible';
+        elements.dynamicMessage.style.minHeight = 'auto';
         
         const userName = state.userName;
         const answers = state.answers;
@@ -594,64 +645,19 @@ document.addEventListener('DOMContentLoaded', function() {
         ];
         
         elements.dynamicMessage.innerHTML = messageParts.join('');
-        
-        // Add some CSS for the message styling
-        const style = document.createElement('style');
-        style.textContent = `
-            .highlight {
-                color: var(--deep-pink);
-                font-weight: 600;
-                font-family: var(--font-title);
-            }
-            .message-opening {
-                font-size: 1.3em;
-                font-family: var(--font-title);
-                color: var(--deep-pink);
-                display: block;
-                margin-bottom: 10px;
-            }
-            .message-intro {
-                font-style: italic;
-                color: var(--lavender);
-            }
-            .message-conclusion {
-                font-weight: 500;
-                color: var(--deep-pink);
-                border-left: 3px solid var(--lavender);
-                padding-left: 15px;
-                margin: 15px 0;
-            }
-            .magic-line {
-                background: linear-gradient(135deg, var(--light-pink), var(--baby-blue));
-                padding: 10px 15px;
-                border-radius: 10px;
-                display: inline-block;
-                margin: 10px 0;
-                box-shadow: var(--shadow-soft);
-            }
-            .final-line {
-                font-family: var(--font-title);
-                font-size: 1.2em;
-                color: var(--deep-pink);
-                text-align: center;
-                display: block;
-                margin-top: 20px;
-                padding: 15px;
-                border: 2px dashed var(--lavender);
-                border-radius: 15px;
-                background: rgba(255, 255, 255, 0.7);
-            }
-        `;
-        document.head.appendChild(style);
     }
 
     // Handle yes click
     function handleYesClick() {
         playSound('success');
         
+        // Create heart explosion
         createHeartExplosion();
+        
+        // Create confetti
         createConfetti();
         
+        // Switch to yes screen
         setTimeout(() => {
             switchScreen(screens.yes);
         }, 1500);
@@ -662,16 +668,20 @@ document.addEventListener('DOMContentLoaded', function() {
         playSound('click');
         state.noClickCount++;
         
+        // Get popup configuration based on click count
         const configIndex = Math.min(state.noClickCount - 1, state.noPopupConfigs.length - 1);
         const config = state.noPopupConfigs[configIndex];
         
+        // Update popup content
         elements.popupEmoji.textContent = config.emoji;
         elements.popupTitle.textContent = config.title;
         elements.popupMessage.textContent = config.message;
         elements.popupClose.textContent = config.buttonText;
         
+        // Show popup
         elements.noPopup.classList.add('active');
         
+        // Grow yes button, shrink no button
         const yesBtn = elements.yesBtn;
         const noBtn = elements.noBtn;
         
@@ -681,14 +691,17 @@ document.addEventListener('DOMContentLoaded', function() {
         yesBtn.style.fontSize = `${currentYesSize * 1.1}px`;
         noBtn.style.fontSize = `${currentNoSize * 0.9}px`;
         
+        // After 8 clicks, remove no button
         if (state.noClickCount >= 8) {
             noBtn.style.display = 'none';
             
+            // Update popup for final message
             elements.popupEmoji.textContent = "😏";
             elements.popupTitle.textContent = "No Escape Now!";
             elements.popupMessage.textContent = `There is no escape now ${state.userName} 💕 You belong with me.`;
             elements.popupClose.textContent = "Fine, I surrender! 😏";
             
+            // Create raining hearts
             createRainingHearts();
         }
     }
@@ -717,6 +730,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 pointer-events: none;
             `;
             
+            // Random explosion direction
             const angle = Math.random() * Math.PI * 2;
             const velocity = Math.random() * 4 + 1;
             const vx = Math.cos(angle) * velocity;
@@ -768,6 +782,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 pointer-events: none;
             `;
             
+            // Animation
             const animation = confetti.animate([
                 { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
                 { transform: `translateY(100vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
@@ -800,6 +815,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 pointer-events: none;
             `;
             
+            // Animation
             const duration = Math.random() * 3 + 2;
             const delay = Math.random() * 2;
             
@@ -839,23 +855,41 @@ document.addEventListener('DOMContentLoaded', function() {
     function restartExperience() {
         playSound('click');
         
+        // Reset state
         state.userName = '';
         state.answers = {};
         state.currentQuestion = 0;
         state.noClickCount = 0;
         
-        if (messageCountdownTimer) {
-            clearInterval(messageCountdownTimer);
+        // Clear any existing intervals and timeouts
+        if (proceedButtonTimeout) {
+            clearTimeout(proceedButtonTimeout);
+            proceedButtonTimeout = null;
         }
         
+        if (quoteInterval) {
+            clearInterval(quoteInterval);
+            quoteInterval = null;
+        }
+        
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+        }
+        
+        // Reset UI
         elements.userNameInput.value = '';
         elements.enterBtn.disabled = true;
         elements.yesBtn.style.fontSize = '';
         elements.noBtn.style.fontSize = '';
         elements.noBtn.style.display = 'flex';
+        elements.proceedBtn.classList.remove('visible');
+        elements.proceedBtn.classList.add('hidden');
         
+        // Clear dynamic elements
         document.querySelectorAll('.confetti-container div, .heart-explosion div').forEach(el => el.remove());
         
+        // Switch to entry screen
         switchScreen(screens.entry);
         elements.userNameInput.focus();
     }

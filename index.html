@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Valentine 💖 | A Digital Confession</title>
+    <title>A Digital Surprise</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,7 +62,7 @@
             </div>
             
             <div class="loading-countdown">
-                <span class="countdown-number">50</span> seconds until the magic begins
+                <span class="countdown-number">100</span> seconds until the magic begins
             </div>
         </div>
     </section>
@@ -126,22 +126,7 @@
                 </div>
             </div>
             
-            <!-- Countdown Section -->
-            <div class="countdown-timer">
-                <div class="countdown-card">
-                    <div class="countdown-icon">⏳</div>
-                    <div class="countdown-text">
-                        <p>Something magical will appear in</p>
-                        <div class="countdown-display">
-                            <span id="countdown-number">20</span>
-                            <span class="countdown-label">seconds</span>
-                        </div>
-                        <p class="countdown-hint">Hold on just a little longer... 💖</p>
-                    </div>
-                </div>
-            </div>
-            
-            <button id="proceed-btn" class="btn-primary">
+            <button id="proceed-btn" class="btn-primary hidden">
                 <span class="btn-text">I Can't Wait! Show Me Now!</span>
                 <span class="btn-heart">✨</span>
             </button>
@@ -252,7 +237,8 @@
 
     <!-- Audio Elements -->
     <audio id="bg-music" loop>
-        <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-sunset-687.mp3" type="audio/mpeg">
+        <source src="assets/music/mymusic.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
     </audio>
     <audio id="click-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
     <audio id="heart-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-heartbeat-991.mp3"></audio>
