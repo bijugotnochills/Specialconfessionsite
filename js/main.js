@@ -7,8 +7,10 @@ document.addEventListener('DOMContentLoaded', function() {
         currentQuestion: 0,
         noClickCount: 0,
         quoteDuration: 4, // Each quote shows for 4 seconds
-        totalQuotes: 20, // We have 40 quotes
+        totalQuotes: 20, // We have 20 quotes
         loadingTime: 0, // Will be calculated based on quotes
+        skipLoadingTimeout: null,
+        skipMessageTimeout: null,
         quotes: [
             "Even Kagura's umbrella can't hide how much I want to tell you something...",
             "Angela thinks you're the Healing my heart needs.",
@@ -30,26 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
             "If you were an emote, you'd be my favorite spam.",
             "Your presence is my permanent blue buff.",
             "You're the perfect duo my heart searched for across all seasons."
-            // "My heart's cooldown resets every time I think of you.",
-            // "You're the perfect combo my soul has been waiting for.",
-            // "Hanabi's petals aren't as delicate as my feelings for you.",
-            // "My heart's KDA: Killed by your beauty, Death by your smile, Assisted by your kindness",
-            // "You're the missing piece to complete my soul's equipment.",
-            // "Even Vale's tornados can't shake my feelings for you.",
-            // "My heart's passive: Infinite affection for you",
-            // "You're the critical hit my life was missing.",
-            // "If love was a map, you'd be my eternal base.",
-            // "Zhetian's cosmic power is nothing compared to your gravity.",
-            // "Luo Yi's yin yang can't balance how much I lean toward you.",
-            // "Hanabi's ninja ways couldn't stealth steal my heart like you did.",
-            // "You're my permanent teammate in this game called life.",
-            // "My affection meter charges 100% faster when you're around.",
-            // "You're the ultimate skill I want to master forever.",
-            // "Your laughter is my favorite soundtrack.",
-            // "Like a perfect gank, you appeared and captured everything.",
-            // "My devotion has unlimited mana when it comes to you.",
-            // "Even the mightiest lord falls for your charm.",
-            // "My love for you has global range.",
         ],
         questions: [
             {
@@ -161,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ]
     };
 
-    // Calculate loading time based on quotes: 40 quotes × 2.5s = 100 seconds
+    // Calculate loading time based on quotes: 20 quotes × 4s = 80 seconds
     state.loadingTime = state.totalQuotes * state.quoteDuration;
 
     // DOM Elements
@@ -200,7 +182,9 @@ document.addEventListener('DOMContentLoaded', function() {
         popupEmoji: document.querySelector('.popup-emoji'),
         popupTitle: document.querySelector('.popup-title'),
         yesScreenName: document.getElementById('yes-screen-name'),
-        yesScreenNameInline: document.getElementById('yes-screen-name-inline')
+        yesScreenNameInline: document.getElementById('yes-screen-name-inline'),
+        skipLoadingBtn: document.getElementById('skip-loading-btn'),
+        skipMessageBtn: document.getElementById('skip-message-btn')
     };
 
     // Audio Elements
@@ -333,6 +317,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         elements.enterBtn.addEventListener('click', handleEnterClick);
         
+        // Skip buttons
+        elements.skipLoadingBtn.addEventListener('click', handleSkipLoading);
+        elements.skipMessageBtn.addEventListener('click', handleSkipMessage);
+        
         // Questions screen
         elements.nextBtn.addEventListener('click', handleNextQuestion);
         elements.textAnswer.addEventListener('input', handleTextAnswer);
@@ -383,11 +371,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Start loading screen
     function startLoadingScreen() {
-        // Set initial countdown to 100 seconds
+        // Set initial countdown to 80 seconds
         let timeLeft = state.loadingTime;
         elements.countdownNumber.textContent = timeLeft;
         
-        // Start showing quotes serially at 2.5 second intervals
+        // Hide skip button initially
+        elements.skipLoadingBtn.classList.add('hidden');
+        
+        // Start showing quotes serially at 4 second intervals
         let quoteIndex = 0;
         showQuote(quoteIndex); // Show first quote immediately
         
@@ -423,19 +414,72 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadQuestion(state.currentQuestion);
             }
         }, 1000);
+        
+        // Show skip button after 20 seconds
+        state.skipLoadingTimeout = setTimeout(() => {
+            elements.skipLoadingBtn.classList.remove('hidden');
+        }, 20000);
     }
 
-    // Show quote at specific index (serially)
+    // Show quote at specific index (serially) with enhanced animation
     function showQuote(index) {
         if (index >= 0 && index < state.quotes.length) {
             const quote = state.quotes[index];
-            elements.quoteText.textContent = `"${quote}"`;
             
-            // Trigger animation
-            elements.quoteText.parentElement.classList.remove('active');
-            void elements.quoteText.parentElement.offsetWidth; // Trigger reflow
-            elements.quoteText.parentElement.classList.add('active');
+            // Create beautiful quote with animation
+            const quoteElement = elements.quoteText;
+            const quoteCard = quoteElement.parentElement;
+            
+            // Remove active class for animation
+            quoteCard.classList.remove('active');
+            
+            // Wait for transition to complete, then update and show
+            setTimeout(() => {
+                quoteElement.textContent = quote;
+                quoteCard.classList.add('active');
+                
+                // Add a gentle scale effect
+                quoteCard.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    quoteCard.style.transform = 'scale(1)';
+                }, 100);
+                
+            }, 300);
         }
+    }
+
+    // Handle skip loading
+    function handleSkipLoading() {
+        playSound('click');
+        
+        // Clear intervals and timeouts
+        clearInterval(quoteInterval);
+        clearInterval(countdownInterval);
+        clearTimeout(state.skipLoadingTimeout);
+        
+        // Hide skip button
+        elements.skipLoadingBtn.classList.add('hidden');
+        
+        // Skip to questions
+        switchScreen(screens.questions);
+        loadQuestion(state.currentQuestion);
+    }
+
+    // Handle skip message
+    function handleSkipMessage() {
+        playSound('click');
+        
+        // Clear the timeout if button is clicked before it appears
+        if (proceedButtonTimeout) {
+            clearTimeout(proceedButtonTimeout);
+            proceedButtonTimeout = null;
+        }
+        
+        // Hide skip button
+        elements.skipMessageBtn.classList.add('hidden');
+        
+        // Switch to confession screen
+        switchScreen(screens.confession);
     }
 
     // Load question
@@ -516,13 +560,19 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Hide proceed button initially
             elements.proceedBtn.classList.add('hidden');
+            elements.skipMessageBtn.classList.add('hidden');
             
-            // Show proceed button after 10 seconds
+            // Show proceed button after 120 seconds (CHANGED FROM 10 to 120)
             proceedButtonTimeout = setTimeout(() => {
                 elements.proceedBtn.classList.remove('hidden');
                 elements.proceedBtn.classList.add('visible');
                 playSound('heart'); // Gentle sound when button appears
-            }, 10000);
+            }, 120000); // 120 seconds = 120000 milliseconds
+            
+            // Show skip button after 20 seconds
+            state.skipMessageTimeout = setTimeout(() => {
+                elements.skipMessageBtn.classList.remove('hidden');
+            }, 20000);
         }
     }
 
@@ -533,7 +583,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // Clear the timeout if button is clicked before it appears
         if (proceedButtonTimeout) {
             clearTimeout(proceedButtonTimeout);
+            proceedButtonTimeout = null;
         }
+        
+        // Clear skip timeout
+        if (state.skipMessageTimeout) {
+            clearTimeout(state.skipMessageTimeout);
+            state.skipMessageTimeout = null;
+        }
+        
+        // Hide skip button
+        elements.skipMessageBtn.classList.add('hidden');
         
         // Switch to confession screen
         switchScreen(screens.confession);
@@ -877,6 +937,16 @@ document.addEventListener('DOMContentLoaded', function() {
             countdownInterval = null;
         }
         
+        if (state.skipLoadingTimeout) {
+            clearTimeout(state.skipLoadingTimeout);
+            state.skipLoadingTimeout = null;
+        }
+        
+        if (state.skipMessageTimeout) {
+            clearTimeout(state.skipMessageTimeout);
+            state.skipMessageTimeout = null;
+        }
+        
         // Reset UI
         elements.userNameInput.value = '';
         elements.enterBtn.disabled = true;
@@ -885,6 +955,8 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.noBtn.style.display = 'flex';
         elements.proceedBtn.classList.remove('visible');
         elements.proceedBtn.classList.add('hidden');
+        elements.skipLoadingBtn.classList.add('hidden');
+        elements.skipMessageBtn.classList.add('hidden');
         
         // Clear dynamic elements
         document.querySelectorAll('.confetti-container div, .heart-explosion div').forEach(el => el.remove());

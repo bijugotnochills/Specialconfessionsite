@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A Digital Surprise</title>
-    <link rel="stylesheet" href="css/style.css?0206_02">
+    <link rel="stylesheet" href="css/style.css?0206_03">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
@@ -64,6 +64,13 @@
             <div class="loading-countdown">
                 <span class="countdown-number">80</span> seconds until the magic begins
             </div>
+            
+            <!-- Skip Loading Button -->
+            <button id="skip-loading-btn" class="skip-btn hidden">
+                <span class="skip-icon">⏭️</span>
+                <span class="skip-text">Skip Loading</span>
+                <span class="skip-sparkle">✨</span>
+            </button>
         </div>
     </section>
 
@@ -127,8 +134,14 @@
             </div>
             
             <button id="proceed-btn" class="btn-primary hidden">
-                <span class="btn-text">I Can't Wait! Show Me Now!</span>
+                <span class="btn-text">I Can't Wait! Show Me The Big Question!</span>
                 <span class="btn-heart">✨</span>
+            </button>
+            
+            <!-- New Fixed Skip Button for Message Screen -->
+            <button id="skip-message-btn" class="skip-fixed-btn hidden">
+                <span class="skip-fixed-icon">💕</span>
+                <span class="skip-fixed-text">Ready For The Big Question ?</span>
             </button>
         </div>
     </section>
@@ -244,6 +257,6 @@
     <audio id="heart-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-heartbeat-991.mp3"></audio>
     <audio id="success-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
 
-    <script src="js/main.js?0206_01"></script>
+    <script src="js/main.js?0206_03"></script>
 </body>
 </html>
