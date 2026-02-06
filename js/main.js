@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Set audio volumes
         audio.bgMusic.volume = 1.0; // Full volume for background music
-        audio.clickSound.volume = 0.5;
+        audio.clickSound.volume = 0.18;
         audio.heartSound.volume = 0.4;
         audio.successSound.volume = 0.6;
         
@@ -562,17 +562,17 @@ document.addEventListener('DOMContentLoaded', function() {
             elements.proceedBtn.classList.add('hidden');
             elements.skipMessageBtn.classList.add('hidden');
             
-            // Show proceed button after 120 seconds (CHANGED FROM 10 to 120)
+            // Show proceed button after 30 seconds (CHANGED FROM 10 to 120)
             proceedButtonTimeout = setTimeout(() => {
                 elements.proceedBtn.classList.remove('hidden');
                 elements.proceedBtn.classList.add('visible');
                 playSound('heart'); // Gentle sound when button appears
-            }, 120000); // 120 seconds = 120000 milliseconds
+            }, 30000); // 30 seconds = 120000 milliseconds
             
             // Show skip button after 20 seconds
             state.skipMessageTimeout = setTimeout(() => {
                 elements.skipMessageBtn.classList.remove('hidden');
-            }, 20000);
+            }, 5000);
         }
     }
 
