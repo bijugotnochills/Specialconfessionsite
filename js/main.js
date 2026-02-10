@@ -1,4 +1,4 @@
-// main.js - COMPLETE UPDATED VERSION WITH SERIAL QUOTES
+// main.js - COMPLETE UPDATED VERSION WITH ALL FEATURES
 document.addEventListener('DOMContentLoaded', function() {
     // App State
     const state = {
@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
         answers: {},
         currentQuestion: 0,
         noClickCount: 0,
+        selectedTheme: 'Pink', // Default theme
         quoteDuration: 4, // Each quote shows for 4 seconds
         totalQuotes: 20, // We have 20 quotes
         loadingTime: 0, // Will be calculated based on quotes
@@ -192,7 +193,28 @@ document.addEventListener('DOMContentLoaded', function() {
         bgMusic: document.getElementById('bg-music'),
         clickSound: document.getElementById('click-sound'),
         heartSound: document.getElementById('heart-sound'),
-        successSound: document.getElementById('success-sound')
+        successSound: document.getElementById('success-sound'),
+        noSound: document.getElementById('no-sound'),
+        selectSound: document.getElementById('select-sound'),
+        muheheheheSound: document.getElementById('muhehehehe-sound'),
+        skipSound: document.getElementById('skip-sound'),
+        // Hero selection sounds
+        kaguraSelect: document.getElementById('kagura-select-sound'),
+        angelaSelect: document.getElementById('angela-select-sound'),
+        guinevereSelect: document.getElementById('guinevere-select-sound'),
+        vexanaSelect: document.getElementById('vexana-select-sound'),
+        florynSelect: document.getElementById('floryn-select-sound'),
+        hanabiSelect: document.getElementById('hanabi-select-sound'),
+        luoYiSelect: document.getElementById('luo-yi-select-sound'),
+        otherSelect: document.getElementById('other-select-sound'),
+        // No button sounds (1-7)
+        noSound1: document.getElementById('no-sound-1'),
+        noSound2: document.getElementById('no-sound-2'),
+        noSound3: document.getElementById('no-sound-3'),
+        noSound4: document.getElementById('no-sound-4'),
+        noSound5: document.getElementById('no-sound-5'),
+        noSound6: document.getElementById('no-sound-6'),
+        noSound7: document.getElementById('no-sound-7')
     };
 
     // Variables for timeout management
@@ -208,10 +230,33 @@ document.addEventListener('DOMContentLoaded', function() {
         setupEventListeners();
         
         // Set audio volumes
-        audio.bgMusic.volume = 1.0; // Full volume for background music
+        audio.bgMusic.volume = 0.75; // Full volume for background music
         audio.clickSound.volume = 0.18;
-        audio.heartSound.volume = 0.4;
-        audio.successSound.volume = 0.6;
+        audio.heartSound.volume = 1.0;
+        audio.successSound.volume = 1.0;
+        audio.noSound.volume = 1.0;
+        audio.selectSound.volume = 1.0;
+        audio.muheheheheSound.volume = 1.0;
+        audio.skipSound.volume = 1.0;
+        
+        // Hero selection sound volumes
+        audio.kaguraSelect.volume = 1.0;
+        audio.angelaSelect.volume = 1.0;
+        audio.guinevereSelect.volume = 1.0;
+        audio.vexanaSelect.volume = 1.0;
+        audio.florynSelect.volume = 1.0;
+        audio.hanabiSelect.volume = 1.0;
+        audio.luoYiSelect.volume = 1.0;
+        audio.otherSelect.volume = 1.0;
+        
+        // No button sound volumes
+        audio.noSound1.volume = 1.0;
+        audio.noSound2.volume = 1.0;
+        audio.noSound3.volume = 1.0;
+        audio.noSound4.volume = 1.0;
+        audio.noSound5.volume = 1.0;
+        audio.noSound6.volume = 1.0;
+        audio.noSound7.volume = 1.0;
         
         // Start background music automatically (muted and then unmuted)
         startBackgroundMusic();
@@ -375,6 +420,10 @@ document.addEventListener('DOMContentLoaded', function() {
         let timeLeft = state.loadingTime;
         elements.countdownNumber.textContent = timeLeft;
         
+        // Reset progress bar
+        elements.loadingProgress.style.width = '0%';
+        elements.loadingProgress.classList.remove('fast-transition');
+        
         // Hide skip button initially
         elements.skipLoadingBtn.classList.add('hidden');
         
@@ -382,29 +431,25 @@ document.addEventListener('DOMContentLoaded', function() {
         let quoteIndex = 0;
         showQuote(quoteIndex); // Show first quote immediately
         
-        // Update progress based on quotes shown
-        let progress = ((quoteIndex + 1) / state.totalQuotes) * 100;
-        elements.loadingProgress.style.width = `${progress}%`;
-        
         // Set up interval for showing quotes serially
         quoteInterval = setInterval(() => {
             quoteIndex++;
             if (quoteIndex < state.quotes.length) {
                 showQuote(quoteIndex);
-                
-                // Update progress based on quotes shown
-                progress = ((quoteIndex + 1) / state.totalQuotes) * 100;
-                elements.loadingProgress.style.width = `${progress}%`;
             } else {
                 // We've shown all quotes, clear the interval
                 clearInterval(quoteInterval);
             }
         }, state.quoteDuration * 1000);
         
-        // Update countdown every second
+        // Smoothly update progress and countdown every second
         countdownInterval = setInterval(() => {
             timeLeft--;
             elements.countdownNumber.textContent = timeLeft;
+            
+            // Calculate progress based on time left (smooth progression)
+            const progress = ((state.loadingTime - timeLeft) / state.loadingTime) * 100;
+            elements.loadingProgress.style.width = `${progress}%`;
             
             if (timeLeft <= 0) {
                 clearInterval(countdownInterval);
@@ -415,10 +460,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 1000);
         
-        // Show skip button after 20 seconds
+        // Show skip button after 15 seconds
         state.skipLoadingTimeout = setTimeout(() => {
             elements.skipLoadingBtn.classList.remove('hidden');
-        }, 20000);
+        }, 15000);
     }
 
     // Show quote at specific index (serially) with enhanced animation
@@ -450,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle skip loading
     function handleSkipLoading() {
-        playSound('click');
+        playSound('skip');
         
         // Clear intervals and timeouts
         clearInterval(quoteInterval);
@@ -460,9 +505,27 @@ document.addEventListener('DOMContentLoaded', function() {
         // Hide skip button
         elements.skipLoadingBtn.classList.add('hidden');
         
-        // Skip to questions
-        switchScreen(screens.questions);
-        loadQuestion(state.currentQuestion);
+        // Add fast transition class for smooth skip animation
+        elements.loadingProgress.classList.add('fast-transition');
+        
+        // Set countdown to 0
+        elements.countdownNumber.textContent = '0';
+        
+        // Animate progress to 100% quickly
+        elements.loadingProgress.style.width = '100%';
+        
+        // Show final quote if available
+        if (state.quotes.length > 0) {
+            const finalQuote = state.quotes[state.quotes.length - 1];
+            elements.quoteText.textContent = finalQuote;
+        }
+        
+        // Wait for animation to complete, then proceed
+        setTimeout(() => {
+            playSound('success');
+            switchScreen(screens.questions);
+            loadQuestion(state.currentQuestion);
+        }, 500); // Match this with the CSS transition time (0.5s)
     }
 
     // Handle skip message
@@ -473,6 +536,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (proceedButtonTimeout) {
             clearTimeout(proceedButtonTimeout);
             proceedButtonTimeout = null;
+        }
+        
+        // Clear skip timeout
+        if (state.skipMessageTimeout) {
+            clearTimeout(state.skipMessageTimeout);
+            state.skipMessageTimeout = null;
         }
         
         // Hide skip button
@@ -513,7 +582,67 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Select option
     function selectOption(value, element) {
-        playSound('click');
+        const currentQuestionId = state.questions[state.currentQuestion].id;
+        
+        // Handle Question 1: Color - Apply full theme
+        if (currentQuestionId === 'color') {
+            // First, remove all theme classes from body
+            document.body.classList.remove('theme-pink', 'theme-blue', 'theme-purple', 
+                                         'theme-red', 'theme-green', 'theme-yellow', 'theme-rainbow');
+            
+            // Remove all color border classes from all options
+            document.querySelectorAll('.answer-option').forEach(opt => {
+                opt.classList.remove('color-border-pink', 'color-border-blue', 'color-border-purple', 
+                                   'color-border-red', 'color-border-green', 'color-border-yellow', 
+                                   'color-border-rainbow');
+            });
+            
+            // Add specific theme class to body based on selection
+            const themeMap = {
+                'Pink': 'theme-pink',
+                'Blue': 'theme-blue',
+                'Purple': 'theme-purple',
+                'Red': 'theme-red',
+                'Green': 'theme-green',
+                'Yellow': 'theme-yellow',
+                'Rainbow!': 'theme-rainbow'
+            };
+            
+            // Add specific border class to selected option
+            const borderMap = {
+                'Pink': 'color-border-pink',
+                'Blue': 'color-border-blue',
+                'Purple': 'color-border-purple',
+                'Red': 'color-border-red',
+                'Green': 'color-border-green',
+                'Yellow': 'color-border-yellow',
+                'Rainbow!': 'color-border-rainbow'
+            };
+            
+            const themeClass = themeMap[value];
+            if (themeClass) {
+                document.body.classList.add(themeClass);
+                // Also add a data attribute for reference
+                document.body.setAttribute('data-theme', value.toLowerCase());
+            }
+            
+            if (borderMap[value]) {
+                element.classList.add(borderMap[value]);
+            }
+            
+            // Store theme in state
+            state.selectedTheme = value;
+            
+            playSound('select'); // Play regular select sound for color
+        }
+        // Handle Question 2: Hero - Play hero-specific sound
+        else if (currentQuestionId === 'hero') {
+            playHeroSound(value);
+        }
+        // For other questions, play regular select sound
+        else {
+            playSound('select');
+        }
         
         // Remove selected class from all options
         document.querySelectorAll('.answer-option').forEach(opt => {
@@ -524,11 +653,43 @@ document.addEventListener('DOMContentLoaded', function() {
         element.classList.add('selected');
         
         // Store answer
-        state.answers[state.questions[state.currentQuestion].id] = value;
+        state.answers[currentQuestionId] = value;
         elements.nextBtn.disabled = false;
         
         // Update answer count
         elements.answerCount.textContent = Object.keys(state.answers).length;
+    }
+
+    // Play hero-specific sound (without stopping BGM)
+    function playHeroSound(heroName) {
+        try {
+            // Hero sound mapping
+            const heroSoundMap = {
+                'Kagura': audio.kaguraSelect,
+                'Angela': audio.angelaSelect,
+                'Guinevere': audio.guinevereSelect,
+                'Vexana': audio.vexanaSelect,
+                'Floryn': audio.florynSelect,
+                'Hanabi': audio.hanabiSelect,
+                'Luo Yi': audio.luoYiSelect,
+                'Other': audio.otherSelect
+            };
+            
+            const heroSound = heroSoundMap[heroName];
+            
+            if (heroSound) {
+                // Reset and play the hero sound
+                heroSound.currentTime = 0;
+                heroSound.play().catch(e => console.log(`Hero sound (${heroName}) play error:`, e));
+            } else {
+                // Fallback to regular select sound
+                playSound('select');
+            }
+        } catch (e) {
+            console.log("Hero sound play error:", e);
+            // Fallback to regular select sound
+            playSound('select');
+        }
     }
 
     // Handle text answer
@@ -552,7 +713,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             generateDynamicMessage();
             switchScreen(screens.message);
-            
+            playSound('heart'); // Gentle sound
             // Clear any existing timeout
             if (proceedButtonTimeout) {
                 clearTimeout(proceedButtonTimeout);
@@ -566,8 +727,8 @@ document.addEventListener('DOMContentLoaded', function() {
             proceedButtonTimeout = setTimeout(() => {
                 elements.proceedBtn.classList.remove('hidden');
                 elements.proceedBtn.classList.add('visible');
-                playSound('heart'); // Gentle sound when button appears
-            }, 30000); // 30 seconds = 120000 milliseconds
+                // playSound('heart'); // Gentle sound when button appears
+            }, 120000); // 120 seconds = 120000 milliseconds
             
             // Show skip button after 20 seconds
             state.skipMessageTimeout = setTimeout(() => {
@@ -714,7 +875,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create heart explosion
         createHeartExplosion();
         
-        // Create confetti
+        // Create confetti with theme colors
         createConfetti();
         
         // Switch to yes screen
@@ -725,7 +886,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle no click
     function handleNoClick() {
-        playSound('click');
+        // Play different sound based on click count (1-7: different sounds, 8+: muhehehehe)
+        if (state.noClickCount < 7) {
+            // Play one of the 7 different no sounds
+            const noSoundKey = `noSound${state.noClickCount + 1}`;
+            const currentNoSound = audio[noSoundKey];
+            if (currentNoSound) {
+                try {
+                    currentNoSound.currentTime = 0;
+                    currentNoSound.play().catch(e => console.log(`No sound ${state.noClickCount + 1} play error:`, e));
+                } catch (e) {
+                    console.log("No sound play error:", e);
+                }
+            }
+        } else {
+            // From the 8th click onwards, play muhehehehe sound
+            playSound('muhehehehe');
+        }
+        
         state.noClickCount++;
         
         // Get popup configuration based on click count
@@ -820,11 +998,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Create confetti
+    // Create confetti with theme colors
     function createConfetti() {
         const container = document.querySelector('.confetti-container');
         const confettiCount = window.innerWidth < 768 ? 100 : 200;
-        const colors = ['#ffafcc', '#cdb4db', '#bde0fe', '#a2d2ff', '#ffc8dd'];
+        
+        // Use theme colors for confetti
+        const colors = [
+            'var(--primary-color)',
+            'var(--secondary-color)', 
+            'var(--accent-color)',
+            'var(--light-color)',
+            'var(--deep-color)'
+        ];
         
         for (let i = 0; i < confettiCount; i++) {
             const confetti = document.createElement('div');
@@ -896,15 +1082,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Play sound
     function playSound(type) {
         try {
-            if (type === 'click') {
-                audio.clickSound.currentTime = 0;
-                audio.clickSound.play();
-            } else if (type === 'heart') {
-                audio.heartSound.currentTime = 0;
-                audio.heartSound.play();
-            } else if (type === 'success') {
-                audio.successSound.currentTime = 0;
-                audio.successSound.play();
+            const soundMap = {
+                'click': audio.clickSound,
+                'heart': audio.heartSound,
+                'success': audio.successSound,
+                'awwww': audio.noSound,
+                'select': audio.selectSound,
+                'muhehehehe': audio.muheheheheSound,
+                'skip': audio.skipSound
+            };
+            
+            const soundToPlay = soundMap[type];
+            
+            if (soundToPlay) {
+                // Reset and play the specific sound
+                soundToPlay.currentTime = 0;
+                soundToPlay.play().catch(e => console.log(`${type} sound play error:`, e));
             }
         } catch (e) {
             console.log("Sound play error:", e);
@@ -920,6 +1113,7 @@ document.addEventListener('DOMContentLoaded', function() {
         state.answers = {};
         state.currentQuestion = 0;
         state.noClickCount = 0;
+        state.selectedTheme = 'Pink';
         
         // Clear any existing intervals and timeouts
         if (proceedButtonTimeout) {
@@ -960,6 +1154,18 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Clear dynamic elements
         document.querySelectorAll('.confetti-container div, .heart-explosion div').forEach(el => el.remove());
+        
+        // Reset loading progress transition
+        elements.loadingProgress.classList.remove('fast-transition');
+        elements.loadingProgress.style.width = '0%';
+        
+        // Reset theme to default
+        document.body.classList.remove('theme-pink', 'theme-blue', 'theme-purple', 
+                                     'theme-red', 'theme-green', 'theme-yellow', 'theme-rainbow');
+        document.body.removeAttribute('data-theme');
+        
+        // Reset background to default gradient
+        document.body.style.background = 'linear-gradient(135deg, var(--soft-pink) 0%, var(--baby-blue) 50%, var(--light-lavender) 100%)';
         
         // Switch to entry screen
         switchScreen(screens.entry);
